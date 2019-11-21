@@ -1,0 +1,9 @@
+FROM puckel/docker-airflow:latest
+
+USER root
+#RUN apt-get install htop
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		htop 
+        #&& rm -rf /var/lib/apt/lists/*
+
+COPY airflow.cfg /usr/local/airflow/airflow.cfg

@@ -1,0 +1,39 @@
+version: '3'
+services:
+    postgres:
+        build: ./postgres
+        image: postgres:latest
+        environment:
+            - POSTGRES_PASSWORD=admin
+
+    pgadmin4:
+        build: ./pgadmin
+        image: pgadmin:latest
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin
+            - PGADMIN_DEFAULT_PASSWORD=admin
+        ports:
+            - "80:80"
+
+    airflow:
+        build: ./airflow
+        image: airflow:latest
+        restart: always
+        depends_on:
+            - postgres
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+        volumes:
+            - ./airflow/dags:/usr/local/airflow/dags
+        ports:
+            - "8080:8080"
+        command: webserver
+
+    pyspark:
+        build: ./pyspark
+        image: pyspark:latest
+        volumes:
+            - ./pyspark/work:/home/jovyan/work
+        ports:
+            - "8888:8888"
