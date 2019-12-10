@@ -1,5 +1,6 @@
 # dockerairflow
 
+
 Docker repo containing containers for a fully independent airflow, postgres, and spark development environemnt. All containers are fully configured and setup has already been performed. All that is needed to do is pull and run docker compose commands. 
 
 Airflow is configured using LocalExecutor mode. Still need to fix fernet key issue
@@ -26,3 +27,8 @@ Based on puckel-airflow with slight modifications. Using LocalExecutor. WebUI is
 # Spark
 
 Spark is currently based on the jupyter notebook spark docker image. This may be modified in the future, as jupyter notebook is currently not configured, but can be set up if desired. Spark master webUI is exposed on port 8181. Two spark slave clients are also available on port 8081 and 8082 respectively. 
+
+copy repo
+ git bash into repo
+ run docker-compose build
+     docker-compose up -d
