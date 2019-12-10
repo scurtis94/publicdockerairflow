@@ -1,9 +1,37 @@
 FROM puckel/docker-airflow:latest
 
 USER root
+
+RUN mkdir -p /usr/share/man/man1 && \
+    apt-get -y update && \
+    apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
+    rm -rf /var/lib/apt/lists/*
+
 #RUN apt-get install htop
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		htop 
-        #&& rm -rf /var/lib/apt/lists/*
+		htop \
+        nano \
+        wget
+    #&& wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/otn-pub/java/jdk/13.0.1+9/cec27d702aa74d5a8630c65ae61e4305/jdk-13.0.1_linux-x64_bin.tar.gz \
+    #&& tar zxvf jdk-13.0.1_linux-x64_bin.tar.gz \
+    #&& rm jdk-13.0.1_linux-x64_bin.tar.gz \
+    #&& export JAVA_HOME=/usr/local/airflow/jdk-13.0.1
+    #&& export PATH=$JAVA_HOME/bin:$PATH \
+    #&& rm -rf /var/lib/apt/lists/*
+
+RUN pip install pyspark     
+
+RUN mkdir -p /usr/local/airflow/data && chown -R airflow: /usr/local/airflow/data && \
+        mkdir -p /usr/local/airflow/scripts && chown -R airflow: /usr/local/airflow/scripts && \
+        mkdir -p /usr/local/airflow/plugins && chown -R airflow: /usr/local/airflow/plugins
+        #python -c 'import sys\\nsys.path.append("/usr/local/airflow/scripts")'
+        #export PYTHONPATH=/usr/local/airflow/scripts/:$PYTHONPATH
+#ADD initialize.py /usr/local/airflow/data
+
+#RUN python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
+
+#RUN python /usr/local/airflow/data/initialize.py
+
+ENV PYTHONPATH "${PYTHONPATH}:${AIRFLOW_HOME}"
 
 COPY airflow.cfg /usr/local/airflow/airflow.cfg

@@ -1,3 +1,11 @@
 FROM jupyter/pyspark-notebook
 
+USER root
+
+RUN mkdir /usr/local/spark/logs
+#CMD ["start-notebook.sh"]
+
+CMD /usr/local/spark/sbin/start-master.sh -h pyspark --webui-port 8181 ; /usr/local/bin/start-notebook.sh ; sleep infinity
+
+
 #COPY jupyter_notebook_config.py /.jupyter/jupyter_notebook_config.py
