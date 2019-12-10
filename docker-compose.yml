@@ -2,22 +2,22 @@ version: '3'
 services:
     postgres:
         build: ./postgres
-        image: postgres:latest
+        image: sam-postgres:latest
         environment:
-            - POSTGRES_PASSWORD=admin
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
     pgadmin4:
         build: ./pgadmin
-        image: pgadmin:latest
+        image: sam-pgadmin:latest
         environment:
-            - PGADMIN_DEFAULT_EMAIL=admin
-            - PGADMIN_DEFAULT_PASSWORD=admin
+            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
         ports:
             - "80:80"
 
     airflow:
         build: ./airflow
-        image: airflow:latest
+        image: sam-airflow:latest
         restart: always
         depends_on:
             - postgres
@@ -26,14 +26,46 @@ services:
             - EXECUTOR=Local
         volumes:
             - ./airflow/dags:/usr/local/airflow/dags
+            - ./airflow/scripts:/usr/local/airflow/scripts
+            - ./airflow/plugins:/usr/local/airflow/plugins
+            - data-volume:/home/data            
         ports:
             - "8080:8080"
         command: webserver
 
     pyspark:
         build: ./pyspark
-        image: pyspark:latest
+        image: sam-pyspark:latest
         volumes:
-            - ./pyspark/work:/home/jovyan/work
+            - data-volume:/home/data  
         ports:
             - "8888:8888"
+            - "4040:4040"
+            - "8181:8181"
+
+    pysparkworker1:
+        build:
+            context: ./pyspark
+            dockerfile: dockerfile-worker1
+        image: sam-pysparkworker1:latest
+        depends_on:
+            - pyspark
+        volumes:
+            - data-volume:/home/data  
+        ports:
+            - "8081:8081"
+
+    pysparkworker2:
+        build:
+            context: ./pyspark
+            dockerfile: dockerfile-worker2
+        image: sam-pysparkworker2:latest
+        depends_on:
+            - pyspark
+        volumes:
+            - data-volume:/home/data  
+        ports:
+            - "8082:8082"
+
+volumes:
+    data-volume:
