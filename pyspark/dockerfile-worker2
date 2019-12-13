@@ -4,7 +4,7 @@ USER root
 
 RUN mkdir /usr/local/spark/logs
 
-CMD /usr/local/spark/sbin/start-slave.sh spark://pyspark:7077 --webui-port 8082 ; sleep infinity
+CMD /usr/local/spark/sbin/start-slave.sh spark://pyspark:7077 --webui-port 8082 -c 2 -m 2G; sleep infinity
 
 
 #COPY jupyter_notebook_config.py /.jupyter/jupyter_notebook_config.py
